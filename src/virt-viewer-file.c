@@ -217,7 +217,7 @@ virt_viewer_file_get_string(VirtViewerFile* self,
 
     result = g_key_file_get_string(self->priv->keyfile, group, key, &inner_error);
     if (inner_error && inner_error->domain != G_KEY_FILE_ERROR)
-        g_critical("%s", inner_error->message);
+        g_critical("%s", VV_MSG(inner_error->message));
     g_clear_error(&inner_error);
 
     return result;
@@ -246,7 +246,7 @@ virt_viewer_file_get_string_list(VirtViewerFile* self, const char *group,
 
     result = g_key_file_get_string_list(self->priv->keyfile, group, key, length, &inner_error);
     if (inner_error && inner_error->domain != G_KEY_FILE_ERROR)
-        g_critical("%s", inner_error->message);
+        g_critical("%s", VV_MSG(inner_error->message));
     g_clear_error(&inner_error);
 
     return result;
@@ -275,7 +275,7 @@ virt_viewer_file_get_int(VirtViewerFile* self,
 
     result = g_key_file_get_integer(self->priv->keyfile, group, key, &inner_error);
     if (inner_error && inner_error->domain != G_KEY_FILE_ERROR)
-        g_critical("%s", inner_error->message);
+        g_critical("%s", VV_MSG(inner_error->message));
     g_clear_error(&inner_error);
 
     return result;

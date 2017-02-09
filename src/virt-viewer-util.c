@@ -41,6 +41,8 @@
 
 #include "virt-viewer-util.h"
 
+const char *virt_viewer_default_error = "Unknown virt-viewer error"; // Localized during init
+
 GQuark
 virt_viewer_error_quark(void)
 {
@@ -265,6 +267,8 @@ static BOOL is_handle_valid(HANDLE h)
 
 void virt_viewer_util_init(const char *appname)
 {
+    virt_viewer_default_error = _(virt_viewer_default_error);
+    
 #ifdef G_OS_WIN32
     /*
      * This named mutex will be kept around by Windows until the

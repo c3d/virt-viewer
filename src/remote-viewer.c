@@ -278,7 +278,7 @@ spice_ctrl_do_connect(SpiceCtrlController *ctrl G_GNUC_UNUSED,
     GError *error = NULL;
 
     if (!virt_viewer_app_initial_connect(self, &error)) {
-        const gchar *msg = error ? error->message :
+        const gchar *msg = error ? VV_MSG(error->message) :
             _("Failed to initiate connection");
         virt_viewer_app_simple_message_dialog(self, msg);
         g_clear_error(&error);
@@ -591,7 +591,7 @@ spice_ctrl_listen_async_cb(GObject *object,
     if (error != NULL) {
         virt_viewer_app_simple_message_dialog(app,
                                               _("Controller connection failed: %s"),
-                                              error->message);
+                                              VV_MSG(error->message));
         g_clear_error(&error);
         exit(EXIT_FAILURE); /* TODO: make start async? */
     }
@@ -859,7 +859,7 @@ create_ovirt_session(VirtViewerApp *app, const char *uri, GError **err)
 
     api = ovirt_proxy_fetch_api(proxy, &error);
     if (error != NULL) {
-        g_debug("failed to get oVirt 'api' collection: %s", error->message);
+        g_debug("failed to get oVirt 'api' collection: %s", VV_MSG(error->message));
 #ifdef HAVE_OVIRT_CANCEL
         if (g_error_matches(error, OVIRT_REST_CALL_ERROR, OVIRT_REST_CALL_ERROR_CANCELLED)) {
             g_clear_error(&error);
@@ -873,7 +873,7 @@ create_ovirt_session(VirtViewerApp *app, const char *uri, GError **err)
     vms = ovirt_api_get_vms(api);
     ovirt_collection_fetch(vms, proxy, &error);
     if (error != NULL) {
-        g_debug("failed to fetch oVirt 'vms' collection: %s", error->message);
+        g_debug("failed to fetch oVirt 'vms' collection: %s", VV_MSG(error->message));
         goto error;
     }
     if (vm_name == NULL ||
@@ -891,13 +891,13 @@ create_ovirt_session(VirtViewerApp *app, const char *uri, GError **err)
     if (state != OVIRT_VM_STATE_UP) {
         g_set_error(&error, VIRT_VIEWER_ERROR, VIRT_VIEWER_ERROR_FAILED,
                     _("oVirt VM %s is not running"), vm_name);
-        g_debug("%s", error->message);
+        g_debug("%s", VV_MSG(error->message));
         goto error;
     }
     g_object_set(app, "guest-name", vm_name, NULL);
 
     if (!ovirt_vm_get_ticket(vm, proxy, &error)) {
-        g_debug("failed to get ticket for %s: %s", vm_name, error->message);
+        g_debug("failed to get ticket for %s: %s", vm_name, VV_MSG(error->message));
         goto error;
     }
 
@@ -931,7 +931,7 @@ create_ovirt_session(VirtViewerApp *app, const char *uri, GError **err)
     if (ghost == NULL) {
         g_set_error(&error, VIRT_VIEWER_ERROR, VIRT_VIEWER_ERROR_FAILED,
                     _("oVirt VM %s has no host information"), vm_name);
-        g_debug("%s", error->message);
+        g_debug("%s", VV_MSG(error->message));
         goto error;
     }
 
@@ -942,7 +942,7 @@ create_ovirt_session(VirtViewerApp *app, const char *uri, GError **err)
     } else {
         g_set_error(&error, VIRT_VIEWER_ERROR, VIRT_VIEWER_ERROR_FAILED,
                     _("oVirt VM %s has unknown display type: %d"), vm_name, type);
-        g_debug("%s", error->message);
+        g_debug("%s", VV_MSG(error->message));
         goto error;
     }
 
@@ -1136,7 +1136,7 @@ retry_dialog:
             g_free(path);
             if (error) {
                 g_prefix_error(&error, _("Invalid file %s: "), guri);
-                g_warning("%s", error->message);
+                g_warning("%s", VV_MSG(error->message));
                 goto cleanup;
             }
             g_object_get(G_OBJECT(vvfile), "type", &type, NULL);
@@ -1197,7 +1197,9 @@ cleanup:
 
     if (!ret && priv->open_recent_dialog) {
         if (error != NULL) {
-            virt_viewer_app_simple_message_dialog(app, _("Unable to connect: %s"), error->message);
+            virt_viewer_app_simple_message_dialog(app,
+                                                  _("Unable to connect: %s"),
+                                                  VV_MSG(error->message));
         }
         g_clear_error(&error);
         goto retry_dialog;

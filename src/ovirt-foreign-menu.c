@@ -367,7 +367,7 @@ static void updated_cdrom_cb(GObject *source_object,
         const char *current_file = foreign_menu->priv->current_iso_name;
 
         if (error != NULL) {
-            g_warning("failed to update cdrom resource: %s", error->message);
+            g_warning("failed to update cdrom resource: %s", VV_MSG(error->message));
             g_clear_error(&error);
         }
         g_debug("setting OvirtCdrom:file back to '%s'",
@@ -504,7 +504,7 @@ static void cdrom_file_refreshed_cb(GObject *source_object,
 
     ovirt_resource_refresh_finish(cdrom, result, &error);
     if (error != NULL) {
-        g_warning("failed to refresh cdrom content: %s", error->message);
+        g_warning("failed to refresh cdrom content: %s", VV_MSG(error->message));
         g_clear_error(&error);
         return;
     }
@@ -548,7 +548,7 @@ static void cdroms_fetched_cb(GObject *source_object,
 
     ovirt_collection_fetch_finish(cdrom_collection, result, &error);
     if (error != NULL) {
-        g_warning("failed to fetch cdrom collection: %s", error->message);
+        g_warning("failed to fetch cdrom collection: %s", VV_MSG(error->message));
         g_clear_error(&error);
         return;
     }
@@ -600,7 +600,7 @@ static void storage_domains_fetched_cb(GObject *source_object,
 
     ovirt_collection_fetch_finish(collection, result, &error);
     if (error != NULL) {
-        g_warning("failed to fetch storage domains: %s", error->message);
+        g_warning("failed to fetch storage domains: %s", VV_MSG(error->message));
         g_clear_error(&error);
         return;
     }
@@ -663,7 +663,7 @@ static void vms_fetched_cb(GObject *source_object,
     collection = OVIRT_COLLECTION(source_object);
     ovirt_collection_fetch_finish(collection, result, &error);
     if (error != NULL) {
-        g_debug("failed to fetch VM list: %s", error->message);
+        g_debug("failed to fetch VM list: %s", VV_MSG(error->message));
         g_clear_error(&error);
         return;
     }
@@ -713,7 +713,7 @@ static void api_fetched_cb(GObject *source_object,
     proxy = OVIRT_PROXY(source_object);
     menu->priv->api = ovirt_proxy_fetch_api_finish(proxy, result, &error);
     if (error != NULL) {
-        g_debug("failed to fetch toplevel API object: %s", error->message);
+        g_debug("failed to fetch toplevel API object: %s", VV_MSG(error->message));
         g_clear_error(&error);
         return;
     }
@@ -746,7 +746,7 @@ static void iso_list_fetched_cb(GObject *source_object,
     ovirt_collection_fetch_finish(collection, result, &error);
     if (error != NULL) {
         g_warning("failed to fetch files for ISO storage domain: %s",
-                   error->message);
+                  VV_MSG(error->message));
         g_clear_error(&error);
         return;
     }

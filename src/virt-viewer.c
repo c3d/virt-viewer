@@ -630,7 +630,7 @@ virt_viewer_open_connection(VirtViewerApp *self G_GNUC_UNUSED, int *fd)
 
     err = virGetLastError();
     if (err && err->code != VIR_ERR_NO_SUPPORT) {
-        g_debug("Error %s", err->message ? err->message : "Unknown");
+        g_debug("Error %s", VV_MSG(err->message) ? err->message : "Unknown");
         return TRUE;
     }
 #endif
@@ -642,7 +642,7 @@ virt_viewer_open_connection(VirtViewerApp *self G_GNUC_UNUSED, int *fd)
     if (virDomainOpenGraphics(priv->dom, 0, pair[0],
                               VIR_DOMAIN_OPEN_GRAPHICS_SKIPAUTH) < 0) {
         err = virGetLastError();
-        g_debug("Error %s", err && err->message ? err->message : "Unknown");
+        g_debug("Error %s", err && VV_MSG(err->message) ? err->message : "Unknown");
         close(pair[0]);
         close(pair[1]);
         return TRUE;
@@ -680,7 +680,7 @@ virt_viewer_domain_event(virConnectPtr conn G_GNUC_UNUSED,
     case VIR_DOMAIN_EVENT_STARTED:
         virt_viewer_update_display(self, dom, &error);
         if (error) {
-            virt_viewer_app_simple_message_dialog(app, error->message);
+            virt_viewer_app_simple_message_dialog(app, VV_MSG(error->message));
             g_clear_error(&error);
         }
 
@@ -688,7 +688,7 @@ virt_viewer_domain_event(virConnectPtr conn G_GNUC_UNUSED,
         if (error) {
             /* we may want to consolidate error reporting in
                app_activate() instead */
-            g_warning("%s", error->message);
+            g_warning("%s", VV_MSG(error->message));
             g_clear_error(&error);
         }
         break;
@@ -778,7 +778,7 @@ choose_vm(GtkWindow *main_window,
         virErrorPtr err = virGetLastError();
         g_set_error_literal(error,
                             VIRT_VIEWER_ERROR, VIRT_VIEWER_ERROR_FAILED,
-                            err && err->message ? err->message : "unknown libvirt error");
+                            err && err->message ? err->message : _("Unknown libvirt error"));
     } else if (virDomainGetState(dom, &i, NULL, 0) < 0 || i != VIR_DOMAIN_RUNNING) {
         g_set_error(error,
                     VIRT_VIEWER_ERROR, VIRT_VIEWER_ERROR_FAILED,

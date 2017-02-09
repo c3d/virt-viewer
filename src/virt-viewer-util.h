@@ -36,6 +36,9 @@ enum {
 #define VIRT_VIEWER_ERROR virt_viewer_error_quark ()
 #define VIRT_VIEWER_RESOURCE_PREFIX "/org/virt-manager/virt-viewer"
 
+extern const char *virt_viewer_default_error;
+#define VV_MSG(msg) ((msg) ? (msg) : virt_viewer_default_error)
+
 GQuark virt_viewer_error_quark(void);
 
 void virt_viewer_util_init(const char *appname);

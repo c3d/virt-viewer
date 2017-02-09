@@ -256,7 +256,7 @@ virt_viewer_app_save_config(VirtViewerApp *self)
         // with the vm name so user can make sense of it later.
         gchar *comment = g_key_file_get_comment(priv->config, priv->uuid, NULL, &error);
         if (error) {
-            g_debug("Unable to get comment from key file: %s", error->message);
+            g_debug("Unable to get comment from key file: %s", VV_MSG(error->message));
             g_clear_error(&error);
         } else {
             if (!comment || *comment == '\0')
@@ -267,7 +267,7 @@ virt_viewer_app_save_config(VirtViewerApp *self)
 
     if ((data = g_key_file_to_data(priv->config, NULL, &error)) == NULL ||
         !g_file_set_contents(priv->config_file, data, -1, &error)) {
-        g_warning("Couldn't save configuration: %s", error->message);
+        g_warning("Couldn't save configuration: %s", VV_MSG(error->message));
         g_clear_error(&error);
     }
     g_free(data);
@@ -376,7 +376,7 @@ virt_viewer_app_get_monitor_mapping_for_section(VirtViewerApp *self, const gchar
     if (error) {
         if (error->code != G_KEY_FILE_ERROR_GROUP_NOT_FOUND
             && error->code != G_KEY_FILE_ERROR_KEY_NOT_FOUND)
-            g_warning("Error reading monitor assignments for %s: %s", section, error->message);
+            g_warning("Error reading monitor assignments for %s: %s", section, VV_MSG(error->message));
         g_clear_error(&error);
     } else {
         mapping = virt_viewer_parse_monitor_mappings(mappings, nmappings, get_n_client_monitors());
@@ -1240,7 +1240,7 @@ virt_viewer_app_activate(VirtViewerApp *self, GError **error)
 
     if (ret == FALSE) {
         if(error != NULL && *error != NULL)
-            virt_viewer_app_show_status(self, (*error)->message);
+            virt_viewer_app_show_status(self, VV_MSG((*error)->message));
         priv->connected = FALSE;
     } else {
         virt_viewer_app_show_status(self, _("Connecting to graphic server"));
@@ -1726,7 +1726,7 @@ virt_viewer_app_init(VirtViewerApp *self)
     if (g_error_matches(error, G_FILE_ERROR, G_FILE_ERROR_NOENT))
         g_debug("No configuration file %s", self->priv->config_file);
     else if (error)
-        g_warning("Couldn't load configuration: %s", error->message);
+        g_warning("Couldn't load configuration: %s", VV_MSG(error->message));
 
     g_clear_error(&error);
 
@@ -1829,7 +1829,7 @@ virt_viewer_app_on_application_startup(GApplication *app)
 
     if (!virt_viewer_app_start(self, &error)) {
         if (error && !g_error_matches(error, VIRT_VIEWER_ERROR, VIRT_VIEWER_ERROR_CANCELLED))
-            virt_viewer_app_simple_message_dialog(self, error->message);
+            virt_viewer_app_simple_message_dialog(self, VV_MSG(error->message));
 
         g_clear_error(&error);
         g_application_quit(app);
@@ -1865,7 +1865,7 @@ virt_viewer_app_local_command_line (GApplication   *gapp,
 
     if (!g_option_context_parse(context, &argc, args, &error)) {
         if (error != NULL) {
-            g_printerr(_("%s\n"), error->message);
+            g_printerr(_("%s\n"), VV_MSG(error->message));
             g_error_free(error);
         }
 

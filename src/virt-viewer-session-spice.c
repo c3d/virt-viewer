@@ -297,7 +297,7 @@ usb_connect_failed(GObject *object G_GNUC_UNUSED,
     if (g_error_matches(error, G_IO_ERROR, G_IO_ERROR_CANCELLED))
         return;
 
-    g_signal_emit_by_name(self, "session-usb-failed", error->message);
+    g_signal_emit_by_name(self, "session-usb-failed", VV_MSG(error->message));
 }
 
 static void virt_viewer_session_spice_set_has_sw_reader(VirtViewerSessionSpice *session,
@@ -702,7 +702,7 @@ virt_viewer_session_spice_main_channel_event(SpiceChannel *channel,
 
         if (self->priv->pass_try > 0)
             g_signal_emit_by_name(session, "session-auth-refused",
-                                  error != NULL ? error->message : _("Invalid password"));
+                                  error != NULL ? VV_MSG(error->message) : _("Invalid password"));
         self->priv->pass_try++;
 
         /* The username is firstly pre-filled with the username of the current
@@ -742,7 +742,7 @@ virt_viewer_session_spice_main_channel_event(SpiceChannel *channel,
     {
         const GError *error = spice_channel_get_error(channel);
 
-        g_debug("main channel: failed to connect %s", error ? error->message : "");
+        g_debug("main channel: failed to connect %s", error ? VV_MSG(error->message) : "");
 
         if (g_error_matches(error, G_IO_ERROR, G_IO_ERROR_PROXY_NEED_AUTH) ||
             g_error_matches(error, G_IO_ERROR, G_IO_ERROR_PROXY_AUTH_FAILED)) {
@@ -1128,7 +1128,7 @@ virt_viewer_session_spice_channel_destroy(G_GNUC_UNUSED SpiceSession *s,
 
     self->priv->channel_count--;
     if (self->priv->channel_count == 0)
-        g_signal_emit_by_name(self, "session-disconnected", error ? error->message : NULL);
+        g_signal_emit_by_name(self, "session-disconnected", error ? VV_MSG(error->message) : NULL);
 }
 
 VirtViewerSession *
